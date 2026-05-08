@@ -11,8 +11,7 @@ export class UserService {
   //a função para criação do usuário tem como parametro um objeto data com os atributos definidos no createUserDTO
   async create(data: CreateUserDto) {
     //função que realiza o hash da senha
-    const salt = await brcrypt.genSalt();
-    const hashedPassword = await brcrypt.hash(data.password, salt);
+    const hashedPassword = await brcrypt.hash(data.password, 10);
     //cria um objeto para o novo usuário
     const newUser = await this.prisma.usuarios.create({
       data:{
@@ -22,7 +21,10 @@ export class UserService {
     });
 
     //retorna o novo objeto
-    return newUser;
+    return {
+      ...newUser,
+      password: undefined,
+    };
   }
 
   async findAll() {
@@ -31,10 +33,10 @@ export class UserService {
   }
 
 //a função para buscar um usuário tem como parâmetro um id
-  async findOne(id: number) {
+  async findbyEmail(email: string) {
     //cria uma constante local e busca o usuário com o id correspondente
     const user = await this.prisma.usuarios.findUnique({
-      where: { id },
+      where: { email },
     });
     //se ele não for encontrado o sistema retorna uma mensagem de usuário não encontrado
     if(!user){
