@@ -43,7 +43,7 @@ export class UserService {
       throw new NotFoundException('Usuário não encontrado')
     }
     //se for encontrado retorna o nome do usuário
-    return `user ${user.name}`;
+    return user;
   }
 
   //a função para atualizar um usuário tem como parâmetro o id do usuário que será atualizado 
