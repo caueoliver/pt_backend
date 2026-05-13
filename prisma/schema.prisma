@@ -19,7 +19,7 @@ datasource db {
 model usuarios {
   id         Int @id @default(autoincrement())
   name       String   
-  nome   String   @unique
+  nome       String   @unique
   email      String   @unique
   password   String
   profile_picture_url String?
