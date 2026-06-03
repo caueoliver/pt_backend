@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Delete, Put, Param } from '@nestjs/common'
 import { LojaService } from './loja.service';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { UpdateLojaDto } from './dto/update-loja.dto';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller('loja')
 export class LojaController {
@@ -12,7 +13,8 @@ export class LojaController {
     return this.lojaService.create(data);
   }
 
-  @Get()
+  @IsPublic()
+  @Get('todos')
   async findAll() {
     return this.lojaService.findAll();
   }

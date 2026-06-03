@@ -38,4 +38,5 @@ export class LojaService {
     }
     return this.prisma.lojas.delete({ where: { id } });
   }
+
 }
