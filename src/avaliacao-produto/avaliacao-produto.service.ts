@@ -1,26 +1,65 @@
 import { Injectable } from '@nestjs/common';
 import { CreateAvaliacaoProdutoDto } from './dto/create-avaliacao-produto.dto';
 import { UpdateAvaliacaoProdutoDto } from './dto/update-avaliacao-produto.dto';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class AvaliacaoProdutoService {
-  create(createAvaliacaoProdutoDto: CreateAvaliacaoProdutoDto) {
-    return 'This action adds a new avaliacaoProduto';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(dados: CreateAvaliacaoProdutoDto) {
+    return await this.prisma.avaliacoesProduto.create({
+      data: {
+        usuarioId: dados.usuarioId,
+        productId: dados.productId,
+        nota: dados.nota,
+        comentario: dados.comentario,
+      },
+    });
   }
 
-  findAll() {
-    return `This action returns all avaliacaoProduto`;
+  async findAll() {
+    return await this.prisma.avaliacoesProduto.findMany({
+      include: {
+        usuario: { select: { nome: true } },
+        produto: { select: { id: true, name: true } },
+        comentariosAvaliacoes: {
+          include: {
+            usuario: { select: {nome:true} }
+          }
+        }
+      },
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} avaliacaoProduto`;
+  async findOne(id: number) {
+    return await this.prisma.avaliacoesProduto.findUnique({
+      where: { id },
+      include: {
+        usuario: { select: { nome: true } },
+        produto: { select: { id: true, name: true } },
+        comentariosAvaliacoes: {
+          include: {
+            usuario: { select: {nome:true} }
+          }
+        }
+      },
+    });
   }
 
-  update(id: number, updateAvaliacaoProdutoDto: UpdateAvaliacaoProdutoDto) {
-    return `This action updates a #${id} avaliacaoProduto`;
+  async update(id: number, dados: UpdateAvaliacaoProdutoDto) {
+    return await this.prisma.avaliacoesProduto.update({
+      where: { id },
+      data: {
+        nota: dados.nota,
+        comentario: dados.comentario,
+      },
+    });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} avaliacaoProduto`;
+  async remove(id: number) {
+    return await this.prisma.avaliacoesProduto.delete({
+      where: { id },
+    });
   }
 }

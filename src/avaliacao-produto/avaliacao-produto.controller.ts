@@ -1,74 +1,43 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from '@nestjs/common';
 import { AvaliacaoProdutoService } from './avaliacao-produto.service';
 import { CreateAvaliacaoProdutoDto } from './dto/create-avaliacao-produto.dto';
 import { UpdateAvaliacaoProdutoDto } from './dto/update-avaliacao-produto.dto';
-import { PrismaService } from '../prisma.service';
 
-@Controller('avaliacao-produto')
+@Controller('avaliacao_produto')
 export class AvaliacaoProdutoController {
-  constructor(private readonly prisma: PrismaService) {}
-  //criar nova avaliacao
+  constructor(private readonly avaliacaoService: AvaliacaoProdutoService) {}
+
+  // Criar nova avaliacao
   @Post()
-  async criarAvaliacao(
-    @Body() dados: { usuarioId: number; productId: number; nota: number; comentario?: string }
-  ) {
-    return await this.prisma.avaliacoesProduto.create({
-      data: {
-        usuarioId: dados.usuarioId,
-        productId: dados.productId,
-        nota: dados.nota,
-        comentario: dados.comentario,
-      },
-    });
+  async criarAvaliacao(@Body() dados: CreateAvaliacaoProdutoDto) {
+    return await this.avaliacaoService.create(dados);
   }
-  //lista todas avaliacoes
+
+  // Lista todas avaliacoes
   @Get()
   async listarAvaliacoes() {
-    return await this.prisma.avaliacoesProduto.findMany({
-      include: {
-        usuario: {select: {nome: true,},},
-        produto: {select: {id: true, name: true,},},
-      },
-    });
+    return await this.avaliacaoService.findAll();
   }
 
+  // Busca avaliacao especifica
+  // Usamos ParseIntPipe para converter o ID de string para number automaticamente
   @Get(':id')
-  async buscarAvaliacao(@Param('id') id: string) {
-    return await this.prisma.avaliacoesProduto.findUnique({
-      where: { id: Number(id), },
-      include: {
-        usuario: {select: { nome: true, },},
-        produto: {select: {id: true,name: true,
-          },
-        },
-      },
-    });
+  async buscarAvaliacao(@Param('id', ParseIntPipe) id: number) {
+    return await this.avaliacaoService.findOne(id);
   }
 
-   @Patch(':id')
-    async atualizarAvaliacao(
-    @Param('id') id: string,
-    @Body()
-    dados: {
-      nota?: number;
-      comentario?: string;
-    },
+  // Edita a avaliação
+  @Patch(':id')
+  async atualizarAvaliacao(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dados: UpdateAvaliacaoProdutoDto,
   ) {
-    return await this.prisma.avaliacoesProduto.update({
-      where: { id: Number(id), },
-      data: {
-        nota: dados.nota,
-        comentario: dados.comentario,
-      },
-    });
+    return await this.avaliacaoService.update(id, dados);
   }
 
+  // Deleta a avaliacao
   @Delete(':id')
-  async deletarAvaliacao(@Param('id') id: string) {
-    return await this.prisma.avaliacoesProduto.delete({
-      where: {id: Number(id),},
-    });
+  async deletarAvaliacao(@Param('id', ParseIntPipe) id: number) {
+    return await this.avaliacaoService.remove(id);
   }
-
 }
-

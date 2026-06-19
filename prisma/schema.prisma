@@ -66,8 +66,6 @@ model avaliacoesLoja {
   comentario String? 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
-  comentariosAvaliacoes comentariosAvaliacoes[]
 }
 //tabela com as avaliações dos produtos
 model avaliacoesProduto {
@@ -82,7 +80,7 @@ model avaliacoesProduto {
   nota       Int
   comentario String?
 
-  comentarios comentariosAvaliacoes[]
+  comentariosAvaliacoes comentariosAvaliacoes[]
 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
@@ -90,18 +88,17 @@ model avaliacoesProduto {
   @@unique([usuarioId, productId])
 }
 //tabela para os comentarios
+// //tabela para os comentarios
 model comentariosAvaliacoes {
-  id Int @id @default(autoincrement())
-
-  usuarioId Int
-  usuario usuarios @relation(fields: [usuarioId], references: [id])
-
+  id                 Int               @id @default(autoincrement())
+  usuarioId          Int
+  usuario            usuarios          @relation(fields: [usuarioId], references: [id])
+  
   avaliacaoProdutoId Int
-  avaliacaoProduto avaliacoesProduto @relation(fields: [avaliacaoProdutoId], references: [id])
-
-  conteudo String
-
-  createdAt DateTime @default(now())
+  avaliacaoProduto   avaliacoesProduto @relation(fields: [avaliacaoProdutoId], references: [id])
+  
+  conteudo           String
+  createdAt          DateTime          @default(now())
 }
 
 //tabelas das categorias
