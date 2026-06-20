@@ -36,4 +36,9 @@ export class UserController {
     getMe(@CurrentUser() user: User){
         return user;
     }
+
+    @Get('/:id')
+    findbyId(@Param('id',ParseIntPipe) id: number){
+      return this.userService.findbyId(id);
+    }
 }
