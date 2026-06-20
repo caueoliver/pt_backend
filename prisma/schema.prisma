@@ -66,44 +66,39 @@ model avaliacoesLoja {
   comentario String? 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
-
-  comentariosAvaliacoes comentariosAvaliacoes[]
 }
 //tabela com as avaliações dos produtos
 model avaliacoesProduto {
   id         Int @id @default(autoincrement())
 
-  usuarioId  Int @unique
-  usuario    usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-  
-  productId  Int @unique
-  rating     Int
-  comment    String?
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  usuarioId  Int
+  usuario    usuarios @relation(fields: [usuarioId], references: [id])
+
+  productId  Int
+  produto    produtos @relation(fields: [productId], references: [id])
+
+  nota       Int
+  comentario String?
 
   comentariosAvaliacoes comentariosAvaliacoes[]
-  produtos produtos[]
 
-
-}
-//tabela para os comentarios
-model comentariosAvaliacoes {
-  id         Int @id @default(autoincrement())
-
-  usuarioId     Int @unique 
-  usuario       usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
-
-  avaliacoesLojaId   Int @unique
-  avaliacoesLoja     avaliacoesLoja @relation(fields: [avaliacoesLojaId], references: [id], onDelete: Cascade)
-
-  avaliacoesProdutoId  Int @unique
-  avaliacoesProduto    avaliacoesProduto @relation(fields: [avaliacoesProdutoId], references: [id], onDelete: Cascade)
-
-  conteudo    String
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
+  @@unique([usuarioId, productId])
+}
+//tabela para os comentarios
+// //tabela para os comentarios
+model comentariosAvaliacoes {
+  id                 Int               @id @default(autoincrement())
+  usuarioId          Int
+  usuario            usuarios          @relation(fields: [usuarioId], references: [id])
+  
+  avaliacaoProdutoId Int
+  avaliacaoProduto   avaliacoesProduto @relation(fields: [avaliacaoProdutoId], references: [id])
+  
+  conteudo           String
+  createdAt          DateTime          @default(now())
 }
 
 //tabelas das categorias
@@ -137,14 +132,14 @@ model produtos {
 
   
   avaliacoesProduto avaliacoesProduto[]
-  imagensProdutos imagensProdutos[]
+  imagens imagensProdutos[]
   
 }
 //tabela das imagens
 model imagensProdutos {
   id         Int @id @default(autoincrement())
 
-  produtoId  Int @unique
+  produtoId  Int 
   produto    produtos @relation(fields: [produtoId], references: [id], onDelete: Cascade)
 
   imageUrl   String
