@@ -8,6 +8,9 @@ export class CreateLojaDto {
   nome!: string;
 
   @IsString()
+  categoria!: string;
+
+  @IsString()
   @IsOptional()
   descricao?: string;
 

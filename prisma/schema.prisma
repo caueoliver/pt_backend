@@ -40,6 +40,7 @@ model lojas {
   usuario    usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   
   nome       String
+  categoria  String
   descricao  String?
   logoUrl    String
   bannerUrl  String
@@ -55,10 +56,10 @@ model lojas {
 model avaliacoesLoja {
   id         Int @id @default(autoincrement())
 
-  usuarioId  Int  @unique
+  usuarioId  Int  
   usuario    usuarios @relation(fields: [usuarioId],  references: [id], onDelete: Cascade)
 
-  lojaId     Int @unique
+  lojaId     Int 
   loja       lojas @relation(fields: [lojaId], references: [id], onDelete: Cascade)
 
 
@@ -66,6 +67,8 @@ model avaliacoesLoja {
   comentario String? 
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@unique([usuarioId, lojaId])
 }
 //tabela com as avaliações dos produtos
 model avaliacoesProduto {

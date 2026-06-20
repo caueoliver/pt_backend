@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Delete, Put, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete, Put, Param, ParseArrayPipe, ParseIntPipe } from '@nestjs/common';
 import { LojaService } from './loja.service';
 import { CreateLojaDto } from './dto/create-loja.dto';
 import { UpdateLojaDto } from './dto/update-loja.dto';
@@ -29,8 +29,19 @@ export class LojaController {
     return this.lojaService.update(Number(id), data);
   }
 
-  @Delete(':id')
+  @Delete('delete/:id')
   async delete(@Param('id') id: string) {
     return this.lojaService.delete(Number(id));
   }
+
+  @Get(':id/reviews')
+  async getReviewsByLoja(@Param('id') id: string) {
+    return this.lojaService.getReviewsByLoja(Number(id));
+  }
+
+  @Get(':id/produtos')
+  async getProdutosByLoja(@Param('lojaId', ParseIntPipe) lojaId: number) {
+    return this.lojaService.getProdutosByLoja(lojaId);
+  }
+
 }

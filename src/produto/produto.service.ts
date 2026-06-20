@@ -67,7 +67,7 @@ export class ProdutoService {
           select: { imageUrl: true }
         },
         avaliacoesProduto: {
-          select: {rating: true},
+          select: {nota: true},
         }
       }
     });
@@ -77,7 +77,7 @@ export class ProdutoService {
       
       const avaliacoes = produto.avaliacoesProduto;
       //soma o rating de todas as avaliações do produto atual
-      const soma = avaliacoes.reduce((acumulador, atual) => acumulador + atual.rating, 0);
+      const soma = avaliacoes.reduce((acumulador, atual) => acumulador + atual.nota, 0);
       //calcula a média para o produto atual caso o vetor de avaliações não seja vazio
       const media = avaliacoes.length > 0 ? soma/avaliacoes.length : 0;
 
