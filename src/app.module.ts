@@ -12,6 +12,7 @@ import { CategoriaModule } from './categoria/categoria.module';
 import { AvaliacaolojaModule } from './avaliacaoloja/avaliacaoloja.module';
 import { AvaliacaoProdutoModule } from './avaliacao-produto/avaliacao-produto.module';
 import { ComentariosModule } from './comentarios/comentarios.module';
+import { ImagensProdutoModule } from './imagens-produto/imagens-produto.module';
 
 
 
@@ -19,7 +20,8 @@ import { ComentariosModule } from './comentarios/comentarios.module';
   imports: [ConfigModule.forRoot({ isGlobal: true }), UserModule, UserModule, AuthModule, CategoriaModule, AvaliacaolojaModule, ProdutoModule,
     LojaModule,
     AvaliacaoProdutoModule,
-    ComentariosModule],
+    ComentariosModule,
+    ImagensProdutoModule],
 
   controllers: [AppController],
   providers: [AppService,

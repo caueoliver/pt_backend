@@ -132,14 +132,14 @@ model produtos {
 
   
   avaliacoesProduto avaliacoesProduto[]
-  imagensProdutos imagensProdutos[]
+  imagens imagensProdutos[]
   
 }
 //tabela das imagens
 model imagensProdutos {
   id         Int @id @default(autoincrement())
 
-  produtoId  Int @unique
+  produtoId  Int 
   produto    produtos @relation(fields: [produtoId], references: [id], onDelete: Cascade)
 
   imageUrl   String
