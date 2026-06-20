@@ -10,18 +10,26 @@ import { ProdutoModule } from './produto/produto.module';
 import { LojaModule } from './loja/loja.module';
 import { CategoriaModule } from './categoria/categoria.module';
 import { AvaliacaolojaModule } from './avaliacaoloja/avaliacaoloja.module';
+import { AvaliacaoProdutoModule } from './avaliacao-produto/avaliacao-produto.module';
+import { ComentariosModule } from './comentarios/comentarios.module';
+import { ImagensProdutoModule } from './imagens-produto/imagens-produto.module';
+
 
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), UserModule, UserModule, AuthModule, CategoriaModule, AvaliacaolojaModule, ProdutoModule,
-    LojaModule],
+    LojaModule,
+    AvaliacaoProdutoModule,
+    ComentariosModule,
+    ImagensProdutoModule],
 
   controllers: [AppController],
   providers: [AppService,
-    {
-      provide: APP_GUARD,
-      useClass: JwtAuthGuard,
-    }
+    /* {
+    provide: APP_GUARD,
+    useClass: JwtAuthGuard,
+  }
+  */
   ],
 })
 export class AppModule { }
