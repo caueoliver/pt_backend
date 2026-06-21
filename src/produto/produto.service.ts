@@ -12,8 +12,13 @@ export class ProdutoService {
   }
 
   async findAll() {
-    return this.prisma.produtos.findMany();
-  }
+  return this.prisma.produtos.findMany({
+    include: {
+      categoria: { select: { name: true } },
+      imagens: { take: 1, select: { imageUrl: true } },
+    }
+    });
+  } 
 
   async update(id: number, data: UpdateProdutoDto) {
     const produto = await this.prisma.produtos.findUnique({ where: { id } });

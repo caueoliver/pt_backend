@@ -8,6 +8,7 @@ import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 export class ProdutoController {
   constructor(private readonly produtoService: ProdutoService) {}
 
+
   @Post()
   create(@Body() data: CreateProdutoDto) {
     return this.produtoService.create(data);
@@ -46,6 +47,7 @@ export class ProdutoController {
   async delete(@Param('id') id: string) {
     return this.produtoService.delete(Number(id));
   }
+
 
   @Get(':id')
   async findOne(@Param('id') id: string) {

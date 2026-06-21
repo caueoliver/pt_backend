@@ -36,7 +36,7 @@ model usuarios {
 model lojas {
   id         Int @id @default(autoincrement())
 
-  usuarioId  Int @unique
+  usuarioId  Int 
   usuario    usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   
   nome       String

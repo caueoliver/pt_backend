@@ -25,6 +25,11 @@ export class AvaliacaoProdutoController {
   async buscarAvaliacao(@Param('id', ParseIntPipe) id: number) {
     return await this.avaliacaoService.findOne(id);
   }
+  
+  @Get('produto/:produtoId')
+  async buscarAvaliacoesPorProduto(@Param('produtoId', ParseIntPipe) produtoId: number) {
+  return await this.avaliacaoService.findByProduto(produtoId);
+  }
 
   // Edita a avaliação
   @Patch(':id')
