@@ -40,7 +40,7 @@ model lojas {
   usuario    usuarios @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
   
   nome       String
-  categoria  String
+  categoria  String @default("Geral")
   descricao  String?
   logoUrl    String
   bannerUrl  String

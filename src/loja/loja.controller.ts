@@ -19,6 +19,7 @@ export class LojaController {
     return this.lojaService.findAll();
   }
 
+  @IsPublic()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.lojaService.findOne(Number(id));
@@ -34,14 +35,22 @@ export class LojaController {
     return this.lojaService.delete(Number(id));
   }
 
+  @IsPublic()
   @Get(':id/reviews')
   async getReviewsByLoja(@Param('id') id: string) {
     return this.lojaService.getReviewsByLoja(Number(id));
   }
 
+  @IsPublic()
   @Get(':id/produtos')
-  async getProdutosByLoja(@Param('lojaId', ParseIntPipe) lojaId: number) {
-    return this.lojaService.getProdutosByLoja(lojaId);
+  async getProdutosByLoja(@Param('id', ParseIntPipe) id: number) {
+    return this.lojaService.getProdutosByLoja(id);
+  }
+
+  @IsPublic()
+  @Get(':id/melhores')
+  async getMelhoresByLoja(@Param('id', ParseIntPipe) id: number) {
+    return this.lojaService.getProdutosByLoja(id);
   }
 
 }

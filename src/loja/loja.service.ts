@@ -67,71 +67,100 @@ export class LojaService {
     return this.prisma.lojas.delete({ where: { id } });
   }
 
-  async getReviewsByLoja(lojaId: number) {
-    // busca as avaliações no banco
-    const reviewsDb = await this.prisma.avaliacoesLoja.findMany({
+  
+  async getProdutosByLoja(lojaId: number) {
+    // busca os produtos filtrando pelo id da loja
+    const produtosDb = await this.prisma.produtos.findMany({
       where: { lojaId },
       include: {
-        // inclui os dados do usuário que fez a avaliação
+        lojas: { select: { id: true } }, 
+        imagens: {
+          take: 1, 
+          select: { imageUrl: true },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc', // traz os mais recentes primeiro
+      }
+    });
+
+    // mapeia e formata os dados direto para a interface do front
+    return produtosDb.map((produto) => ({
+      id: produto.id,
+      name: produto.name,
+      preco: produto.preco,
+      idLoja: produto.lojaId,
+      estoque: produto.estoque,
+      imagemUrl: produto.imagens && produto.imagens.length > 0 ? produto.imagens[0].imageUrl : "",
+    }));
+  }
+
+  async getProdutosMelhoresByLoja(lojaId: number) {
+    // busca os produtos específicos da loja, incluindo as avaliações
+    const produtos = await this.prisma.produtos.findMany({
+      where: { lojaId },
+      include: {
+        lojas: { select: { id: true } }, 
+        imagens: { 
+          take: 1,
+          select: { imageUrl: true }
+        },
+        avaliacoesProduto: {
+          select: { nota: true }, // idêntico ao findMelhoresAvaliados
+        }
+      }
+    });
+
+    // calcula a média, ordena, pega os primeiros e formata
+    return produtos
+      .map((produto) => {
+        const avaliacoes = produto.avaliacoesProduto;
+        const soma = avaliacoes.reduce((acumulador, atual) => acumulador + atual.nota, 0);
+        const media = avaliacoes.length > 0 ? soma / avaliacoes.length : 0;
+        
+        return { produtoOriginal: produto, media };
+      })
+      .sort((a, b) => b.media - a.media) // ordena da maior média para a menor
+      .slice(0, 15) // os 15 melhores produtos da loja 
+      .map(({ produtoOriginal: p }) => ({
+        // formata para a interface do front
+        id: p.id,
+        name: p.name,
+        preco: p.preco,
+        idLoja: p.lojaId,
+        estoque: p.estoque,
+        imagemUrl: p.imagens && p.imagens.length > 0 ? p.imagens[0].imageUrl : "",
+      }));
+      }
+
+      async getReviewsByLoja(lojaId: number) {
+    // busca as avaliações filtrando pela loja e inclui os dados do autor
+    const reviewsDb = await this.prisma.avaliacoesLoja.findMany({
+      where: { 
+        lojaId: lojaId 
+      },
+      include: {
         usuario: {
           select: {
             id: true,
             nome: true,
-            profile_picture_url: true,
+            profile_picture_url: true, // puxa a foto do perfil
           }
         }
       },
-      orderBy: { createdAt: 'desc' }, // traz os mais recentes primeiro
+      orderBy: { 
+        createdAt: 'desc' // ordena para mostrar os comentários mais recentes primeiro
+      },
     });
 
-    // mapeia o resultado do prisma para retornar o que está definido na interface do front end
+    // formata para a interface do front
     return reviewsDb.map((review) => ({
       id: review.id,
       usuarioId: review.usuario.id,
       nomeUsuario: review.usuario.nome,
-      avatarUrl: review.usuario.profile_picture_url || "", // garante que retorne alguma coisa
+      avatarUrl: review.usuario.profile_picture_url || "", 
       nota: review.nota,
       comentario: review.comentario || "",
     }));
-  } 
-
-  async getProdutosByLoja(lojaId: number) {
-    // busca os produtos e as relações necessárias no banco
-    const produtosDb = await this.prisma.produtos.findMany({
-      where: { lojaId },
-      include: {
-        // puxa apenas a primeira imagem
-        imagens: {
-          orderBy: { ordem: 'asc' },
-          take: 1, 
-        },
-        //puxa apenas as notas para calcular a média dps
-        avaliacoesProduto: {
-          select: { nota: true },
-        },
-      },
-  
-    });
-
-    // mapeia e formata os dados
-    return produtosDb.map((produto) => {
-      // calcula a média de avaliações do produto
-      const totalAvaliacoes = produto.avaliacoesProduto.length;
-      const somaNotas = produto.avaliacoesProduto.reduce((acc, curr) => acc + curr.nota, 0);
-      const avaliacaoMedia = totalAvaliacoes > 0 ? somaNotas / totalAvaliacoes : 0;
-
-      return {
-        id: produto.id,
-        name: produto.name,
-        preco: produto.preco,
-        idLoja: produto.lojaId,
-        avaliacao: avaliacaoMedia, // média calculada 
-        description: produto.description || "",
-        estoque: produto.estoque,
-        // pega a url da primeira imagem, ou uma string vazia se não tiver foto
-        imagemUrl: produto.imagens.length > 0 ? produto.imagens[0].imageUrl : "",
-      };
-    });
   }
-
 }
