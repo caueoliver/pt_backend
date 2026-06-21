@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, ParseIntPipe } from 
 import { AvaliacaoProdutoService } from './avaliacao-produto.service';
 import { CreateAvaliacaoProdutoDto } from './dto/create-avaliacao-produto.dto';
 import { UpdateAvaliacaoProdutoDto } from './dto/update-avaliacao-produto.dto';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller('avaliacao_produto')
 export class AvaliacaoProdutoController {
@@ -26,9 +27,16 @@ export class AvaliacaoProdutoController {
     return await this.avaliacaoService.findOne(id);
   }
   
+  @IsPublic()
   @Get('produto/:produtoId')
   async buscarAvaliacoesPorProduto(@Param('produtoId', ParseIntPipe) produtoId: number) {
-  return await this.avaliacaoService.findByProduto(produtoId);
+    return await this.avaliacaoService.findByProduto(produtoId);
+  }
+
+  @IsPublic()
+  @Get('user/:usuarioId')
+  async buscarAvaliacoesPorUsuario(@Param('usuarioId', ParseIntPipe) usuarioId: number) {
+    return await this.avaliacaoService.findByUsuario(usuarioId);
   }
 
   // Edita a avaliação

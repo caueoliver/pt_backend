@@ -38,6 +38,12 @@ export class ProdutoController {
     return this.produtoService.findMelhoresAvaliados();
   }
 
+  @IsPublic()
+  @Get('usuario/:usuarioId')
+  async findByUsuario(@Param('usuarioId') usuarioId: string) {
+    return this.produtoService.findByUsuario(Number(usuarioId));
+  }
+
   @Put(':id')
   async update(@Param('id') id: string, @Body() data: UpdateProdutoDto) {
     return this.produtoService.update(Number(id), data);

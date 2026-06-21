@@ -37,6 +37,7 @@ export class UserController {
         return user;
     }
 
+    @IsPublic()
     @Get('/:id')
     findbyId(@Param('id',ParseIntPipe) id: number){
       return this.userService.findbyId(id);

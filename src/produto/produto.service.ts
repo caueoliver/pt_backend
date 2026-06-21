@@ -44,6 +44,15 @@ export class ProdutoService {
     return produto;
   }
 
+  async findByUsuario(usuarioId: number) {
+    const lojas = await this.prisma.lojas.findMany({ where: { usuarioId }, select: { id: true } });
+    const lojaIds = lojas.map((l) => l.id);
+    return this.prisma.produtos.findMany({
+      where: { lojaId: { in: lojaIds } },
+      include: { imagens: { take: 1, select: { imageUrl: true } } },
+    });
+  }
+
   async findMaisBaratos(){
     //retorna os 15 primeiros produtos ordenados pelo preço de forma crescente
     const produtos = await this.prisma.produtos.findMany({

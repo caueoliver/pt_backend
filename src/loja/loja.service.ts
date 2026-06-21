@@ -164,7 +164,17 @@ export class LojaService {
       }));
       }
 
-      async getReviewsByLoja(lojaId: number) {
+      async findByUsuario(usuarioId: number) {
+    const lojas = await this.prisma.lojas.findMany({ where: { usuarioId } });
+    return lojas.map((l) => ({
+      id: l.id,
+      nome: l.nome,
+      categoria: l.categoria,
+      logoUrl: l.logoUrl,
+    }));
+  }
+
+  async getReviewsByLoja(lojaId: number) {
     // busca as avaliações filtrando pela loja e inclui os dados do autor
     const reviewsDb = await this.prisma.avaliacoesLoja.findMany({
       where: { 

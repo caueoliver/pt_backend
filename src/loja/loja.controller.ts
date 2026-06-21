@@ -24,6 +24,12 @@ export class LojaController {
   }
 
   @IsPublic()
+  @Get('usuario/:usuarioId')
+  async findByUsuario(@Param('usuarioId') usuarioId: string) {
+    return this.lojaService.findByUsuario(Number(usuarioId));
+  }
+
+  @IsPublic()
   @Get(':id')
   async findOne(@Param('id') id: string) {
     return this.lojaService.findOne(Number(id));

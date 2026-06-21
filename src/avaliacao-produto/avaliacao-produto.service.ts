@@ -63,6 +63,15 @@ export class AvaliacaoProdutoService {
     });
   }
 
+  async findByUsuario(usuarioId: number) {
+    return this.prisma.avaliacoesProduto.findMany({
+      where: { usuarioId },
+      include: {
+        produto: { select: { id: true, name: true } },
+      },
+    });
+  }
+
   async findByProduto(productId: number) {
   return this.prisma.avaliacoesProduto.findMany({
     where: { productId }, 
