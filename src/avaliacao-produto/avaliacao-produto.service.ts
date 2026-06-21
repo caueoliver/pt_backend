@@ -31,6 +31,21 @@ export class AvaliacaoProdutoService {
       },
     });
   }
+  async findByUsuario(userId: number) {
+    return await this.prisma.avaliacoesProduto.findMany({
+      where: {
+        usuarioId: userId, 
+      },
+      include: {
+        produto: { select: { id: true, name: true } },
+        comentariosAvaliacoes: {
+          include: {
+            usuario: { select: { nome: true } }
+          }
+        }
+      },
+    });
+  }
 
   async findOne(id: number) {
     return await this.prisma.avaliacoesProduto.findUnique({

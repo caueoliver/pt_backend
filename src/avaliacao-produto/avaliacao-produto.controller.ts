@@ -18,9 +18,12 @@ export class AvaliacaoProdutoController {
   async listarAvaliacoes() {
     return await this.avaliacaoService.findAll();
   }
+  @Get('user/:userId')
+  async buscarPorUsuario(@Param('userId', ParseIntPipe) userId: number) {
+    return await this.avaliacaoService.findByUsuario(userId); 
+  }
 
   // Busca avaliacao especifica
-  // Usamos ParseIntPipe para converter o ID de string para number automaticamente
   @Get(':id')
   async buscarAvaliacao(@Param('id', ParseIntPipe) id: number) {
     return await this.avaliacaoService.findOne(id);
