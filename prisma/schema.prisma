@@ -30,6 +30,7 @@ model usuarios {
   avaliacoesLoja avaliacoesLoja[]
   comentariosAvaliacoes comentariosAvaliacoes[]
   avaliacoesProduto avaliacoesProduto[]
+  comentariosAvaliacoesLoja comentariosAvaliacoesLoja[]
  
 }
 //tabela das lojas
@@ -63,9 +64,11 @@ model avaliacoesLoja {
 
 
   nota       Int
-  comentario String? 
+  comentario String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  comentariosAvaliacoesLoja comentariosAvaliacoesLoja[]
 }
 //tabela com as avaliações dos produtos
 model avaliacoesProduto {
@@ -135,6 +138,17 @@ model produtos {
   imagens imagensProdutos[]
   
 }
+//tabela para os comentarios das avaliações de loja
+model comentariosAvaliacoesLoja {
+  id               Int            @id @default(autoincrement())
+  usuarioId        Int
+  usuario          usuarios       @relation(fields: [usuarioId], references: [id])
+  avaliacoesLojaId Int
+  avaliacoesLoja   avaliacoesLoja @relation(fields: [avaliacoesLojaId], references: [id])
+  conteudo         String
+  createdAt        DateTime       @default(now())
+}
+
 //tabela das imagens
 model imagensProdutos {
   id         Int @id @default(autoincrement())
