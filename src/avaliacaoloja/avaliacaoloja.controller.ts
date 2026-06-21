@@ -1,15 +1,10 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AvaliacaolojaService } from './avaliacaoloja.service';
-import { CreateAvaliacaolojaDto } from './dto/create-avaliacaoloja.dto';
-import { UpdateAvaliacaolojaDto } from './dto/update-avaliacaoloja.dto';
 import { PrismaService } from '../prisma.service';
 
-@Controller('avaliacoes-loja') // rota  
+@Controller('avaliacoes-loja')
 export class AvaliacoesLojaController {
   constructor(private readonly prisma: PrismaService) {}
 
-  //
-  // aqui fica o create de um novo us
   @Post()
   async criarAvaliacao(
     @Body() dados: { usuarioId: number; lojaId: number; nota: number; comentario?: string }
@@ -24,20 +19,24 @@ export class AvaliacoesLojaController {
     });
   }
 
-  // read - listar as avaliaçoes 
   @Get()
   async listarAvaliacoes() {
     return await this.prisma.avaliacoesLoja.findMany({
       include: {
-        usuario: { select: { nome: true } }, // Traz apenas o nome do usuário junto com a nota!
+        usuario: { select: { nome: true, profile_picture_url: true } },
+        loja: { select: { nome: true } },
+        comentariosAvaliacoesLoja: {
+          include: {
+            usuario: { select: { nome: true, profile_picture_url: true } },
+          },
+        },
       },
     });
   }
 
-  // alterta update de um ataualizaçao
   @Patch(':id')
   async atualizarAvaliacao(
-    @Param('id') id: string, 
+    @Param('id') id: string,
     @Body() dados: { nota?: number; comentario?: string }
   ) {
     return await this.prisma.avaliacoesLoja.update({
@@ -49,7 +48,6 @@ export class AvaliacoesLojaController {
     });
   }
 
-  // parte do delete da avaliaçao
   @Delete(':id')
   async deletarAvaliacao(@Param('id') id: string) {
     return await this.prisma.avaliacoesLoja.delete({
@@ -58,3 +56,41 @@ export class AvaliacoesLojaController {
   }
 }
 
+@Controller('comentarios-avaliacao-loja')
+export class ComentariosAvaliacaoLojaController {
+  constructor(private readonly prisma: PrismaService) {}
+
+  @Post()
+  async criarComentario(
+    @Body() dados: { usuarioId: number; avaliacaoLojaId: number; conteudo: string }
+  ) {
+    return await this.prisma.comentariosAvaliacoesLoja.create({
+      data: {
+        usuarioId: dados.usuarioId,
+        avaliacoesLojaId: dados.avaliacaoLojaId,
+        conteudo: dados.conteudo,
+      },
+      include: {
+        usuario: { select: { nome: true, profile_picture_url: true } },
+      },
+    });
+  }
+
+  @Patch(':id')
+  async atualizarComentario(
+    @Param('id') id: string,
+    @Body() dados: { conteudo: string }
+  ) {
+    return await this.prisma.comentariosAvaliacoesLoja.update({
+      where: { id: Number(id) },
+      data: { conteudo: dados.conteudo },
+    });
+  }
+
+  @Delete(':id')
+  async deletarComentario(@Param('id') id: string) {
+    return await this.prisma.comentariosAvaliacoesLoja.delete({
+      where: { id: Number(id) },
+    });
+  }
+}

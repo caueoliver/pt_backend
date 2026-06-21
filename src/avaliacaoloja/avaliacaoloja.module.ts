@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { AvaliacaolojaService } from './avaliacaoloja.service';
-import { AvaliacoesLojaController } from './avaliacaoloja.controller'; // <-- Ajustado
-import { PrismaService } from '../prisma.service'; // (Não esqueça de importar o Prisma aqui também se precisar)
+import { AvaliacoesLojaController, ComentariosAvaliacaoLojaController } from './avaliacaoloja.controller';
+import { PrismaService } from '../prisma.service';
 
 @Module({
-  controllers: [AvaliacoesLojaController], // <-- Ajustado
+  controllers: [AvaliacoesLojaController, ComentariosAvaliacaoLojaController],
   providers: [AvaliacaolojaService, PrismaService],
 })
 export class AvaliacaolojaModule {}
