@@ -13,11 +13,13 @@ export class CreateLojaDto {
   @IsString()
   @IsOptional()
   descricao?: string;
+  
+  @IsOptional()
+  @IsString()
+  logoUrl?: string;
 
   @IsString()
-  logoUrl!: string;
-
-  @IsString()
+  @IsOptional()
   bannerUrl!: string;
 
   @IsString()

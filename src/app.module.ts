@@ -13,7 +13,8 @@ import { AvaliacaolojaModule } from './avaliacaoloja/avaliacaoloja.module';
 import { AvaliacaoProdutoModule } from './avaliacao-produto/avaliacao-produto.module';
 import { ComentariosModule } from './comentarios/comentarios.module';
 import { ImagensProdutoModule } from './imagens-produto/imagens-produto.module';
-
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 
 @Module({
@@ -21,7 +22,13 @@ import { ImagensProdutoModule } from './imagens-produto/imagens-produto.module';
     LojaModule,
     AvaliacaoProdutoModule,
     ComentariosModule,
-    ImagensProdutoModule],
+    ImagensProdutoModule,
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), 'uploads'), 
+      serveRoot: '/uploads',
+    }),],
+
+    
 
   controllers: [AppController],
   providers: [AppService,

@@ -8,7 +8,14 @@ export class LojaService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: CreateLojaDto) {
-    return this.prisma.lojas.create({ data });
+    return this.prisma.lojas.create({ 
+      data: {
+        ...data,
+        // se a logo ou banner vierem vazios, salva uma string vazia
+        logoUrl: data.logoUrl || "",
+        bannerUrl: data.bannerUrl || "",
+      } 
+    });
   }
 
   async findAll() {
