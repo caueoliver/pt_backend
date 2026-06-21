@@ -12,8 +12,32 @@ export class LojaService {
   }
 
   async findAll() {
-    return this.prisma.lojas.findMany();
-  }
+    // busca todas as lojas 
+    const lojasDb = await this.prisma.lojas.findMany({
+      include: {
+        usuario: { select: { nome: true } }, // puxa o nome do dono
+        avaliacoesLoja: { select: { nota: true } } // puxa as notas
+      }
+    });
+
+    // mapeia e formata para bater com a interface do front
+    return lojasDb.map((loja) => {
+      const totalAvaliacoes = loja.avaliacoesLoja.length;
+      const somaNotas = loja.avaliacoesLoja.reduce((acc, curr) => acc + curr.nota, 0);
+      const avaliacaoMedia = totalAvaliacoes > 0 ? somaNotas / totalAvaliacoes : 0;
+
+      return {
+        id: loja.id,
+        nome: loja.nome,
+        categoria: loja.categoria, 
+        idDono: loja.usuarioId,
+        nomeDono: loja.usuario.nome,
+        logoUrl: loja.logoUrl,
+        bannerUrl: loja.bannerUrl,
+        avaliacaoMedia: Number(avaliacaoMedia.toFixed(1)),
+      };
+    });
+    }
 
   async findOne(id: number) {
     // busca a loja e inclui os dados relacionados necessários

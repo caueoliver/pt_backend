@@ -1,49 +1,29 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
 import { CategoriaService } from './categoria.service';
-import { CreateCategoriaDto } from './dto/create-categoria.dto';
-import { UpdateCategoriaDto } from './dto/update-categoria.dto';
-
-import { PrismaService } from '../prisma.service';
+import { IsPublic } from 'src/auth/decorators/is-public.decorator';
 
 @Controller('categorias') 
 export class CategoriasController {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly categoriaService: CategoriaService) {}
 
-  // create nessa parte seqguindo o padrao do BD de catgorias
   @Post()
   async criarCategoria(@Body() dados: { name: string; parentCategoryId?: number }) {
-    return await this.prisma.categorias.create({
-      data: {
-        name: dados.name,
-        parentCategoryId: dados.parentCategoryId, 
-      },
-    });
+    return await this.categoriaService.create(dados.name, dados.parentCategoryId);
   }
 
-  // read para listar as categorias 
-  @Get()
-  async listarCategorias() {
-    return await this.prisma.categorias.findMany({
-      include: {
-        subCategories: true,
-      },
-    });
+  @IsPublic()
+  @Get() 
+  async findAll() {
+    return await this.categoriaService.findAllFormatadas();
   }
 
-  // parte do update , atualizar a categoria 
   @Patch(':id')
   async atualizarCategoria(@Param('id') id: string, @Body() dados: { name: string }) {
-    return await this.prisma.categorias.update({
-      where: { id: Number(id) },
-      data: { name: dados.name },
-    });
+    return await this.categoriaService.update(Number(id), dados.name);
   }
 
-  // parte de deletar
   @Delete(':id')
   async deletarCategoria(@Param('id') id: string) {
-    return await this.prisma.categorias.delete({
-      where: { id: Number(id) },
-    });
+    return await this.categoriaService.delete(Number(id));
   }
 }
